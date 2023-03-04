@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "serviceRequests")
@@ -30,4 +31,17 @@ public class ServiceRequest {
     @Getter
     @Column
     private LocalDate deliveryTime;
+    @Setter
+    @Getter
+    @ManyToMany(mappedBy = "serviceRequests")
+    private List<EndUser> endUsers;
+
+    public ServiceRequest(String taskType, String requirementDescriptions, String technicalConstraints, LocalDate deliveryTime) {
+        this.taskType = taskType;
+        this.requirementDescriptions = requirementDescriptions;
+        this.technicalConstraints = technicalConstraints;
+        this.deliveryTime = deliveryTime;
+    }
+
+    public ServiceRequest() {}
 }

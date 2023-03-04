@@ -18,8 +18,11 @@ public class ServiceProviderController {
         serviceProviderService.addServiceProvider(request);
 
     }
+
+
     @RequestMapping("/showAllServiceProviders")
     public String showAllServiceProviders(){
         return serviceProviderService.showAllServiceProviders().toString();
     }
+
 }

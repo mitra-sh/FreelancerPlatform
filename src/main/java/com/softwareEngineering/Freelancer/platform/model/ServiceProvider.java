@@ -21,6 +21,7 @@ public class ServiceProvider extends User {
     public ServiceProvider(String username,String email,List<Skill> skills) {
         this.setUsername(username);
         this.setEmail(email);
+
         this.skills = skills;
     }
 
