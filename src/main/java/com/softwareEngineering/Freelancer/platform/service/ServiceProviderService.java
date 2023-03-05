@@ -5,10 +5,11 @@ import com.softwareEngineering.Freelancer.platform.model.Skill;
 import com.softwareEngineering.Freelancer.platform.repository.ServiceProviderRepository;
 import com.softwareEngineering.Freelancer.platform.repository.SkillRepository;
 import com.softwareEngineering.Freelancer.platform.request.CreateServiceProviderProfileRequest;
+import com.softwareEngineering.Freelancer.platform.request.ServiceProviderRatingRequest;
 import com.softwareEngineering.Freelancer.platform.request.ServiceProviderSkillUpdateRequest;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,5 +44,18 @@ public class ServiceProviderService {
         }
         serviceProvider.setSkills(newSkillSet);
         serviceProviderRepository.save(serviceProvider);
+    }
+    @Transactional
+    public void rateAServiceProvider(ServiceProviderRatingRequest request){
+        ServiceProvider serviceProvider=serviceProviderRepository.findByUsername(request.getServiceProviderUsername());
+        if(serviceProvider!= null){
+            int currentNumberOfRaters=serviceProvider.getNumberOfRaters();
+            serviceProvider.setNumberOfRaters(++currentNumberOfRaters);
+
+            double currentRateOfServiceProvider=serviceProvider.getRate();
+            double sumOfRates=currentRateOfServiceProvider+request.getRate();
+            serviceProvider.setRate(sumOfRates/serviceProvider.getNumberOfRaters());
+            serviceProviderRepository.save(serviceProvider);
+        }
     }
 }

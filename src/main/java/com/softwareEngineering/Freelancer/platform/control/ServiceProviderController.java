@@ -1,6 +1,7 @@
 package com.softwareEngineering.Freelancer.platform.control;
 
 import com.softwareEngineering.Freelancer.platform.request.CreateServiceProviderProfileRequest;
+import com.softwareEngineering.Freelancer.platform.request.ServiceProviderRatingRequest;
 import com.softwareEngineering.Freelancer.platform.request.ServiceProviderSkillUpdateRequest;
 import com.softwareEngineering.Freelancer.platform.service.ServiceProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +16,22 @@ public class ServiceProviderController {
     private ServiceProviderService serviceProviderService;
 
     @RequestMapping("/createServiceProviderProfile")
-    public void createServiceProviderProfile(@RequestBody CreateServiceProviderProfileRequest request){
+    public void createServiceProviderProfile(@RequestBody CreateServiceProviderProfileRequest request) {
         serviceProviderService.addServiceProvider(request);
     }
 
     @RequestMapping("/showAllServiceProviders")
-    public String showAllServiceProviders(){
+    public String showAllServiceProviders() {
         return serviceProviderService.showAllServiceProviders().toString();
     }
 
     @RequestMapping("/updateServiceProviderSkills")
-    public void updateServiceProviderSkills(@RequestBody ServiceProviderSkillUpdateRequest request){
-         serviceProviderService.updateServiceProviderSkills(request);
+    public void updateServiceProviderSkills(@RequestBody ServiceProviderSkillUpdateRequest request) {
+        serviceProviderService.updateServiceProviderSkills(request);
+    }
+
+    @RequestMapping("/rateAServiceProvider")
+    public void rateAServiceProvider(@RequestBody ServiceProviderRatingRequest request) {
+        serviceProviderService.rateAServiceProvider(request);
     }
 }

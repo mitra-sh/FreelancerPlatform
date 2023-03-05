@@ -11,6 +11,14 @@ import java.util.List;
 public class ServiceProvider extends User {
     @Setter
     @Getter
+    @Column
+    private double rate;
+    @Setter
+    @Getter
+    @Column
+    private int numberOfRaters;
+    @Setter
+    @Getter
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "serviceProvider_skills",
             joinColumns = @JoinColumn(name = "serviceProvider_id"),
@@ -21,16 +29,22 @@ public class ServiceProvider extends User {
     public ServiceProvider(String username,String email,List<Skill> skills) {
         this.setUsername(username);
         this.setEmail(email);
-
         this.skills = skills;
+        this.setRate(0);
+        this.setNumberOfRaters(0);
     }
 
-    public ServiceProvider(){}
+    public ServiceProvider(){
+        this.setRate(0);
+        this.setNumberOfRaters(0);
+    }
 
     @Override
     public String toString() {
         return "ServiceProvider{" +
-                "skills=" + skills +
+                "rate=" + rate +
+                ", numberOfRaters=" + numberOfRaters +
+                ", skills=" + skills +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 '}';
