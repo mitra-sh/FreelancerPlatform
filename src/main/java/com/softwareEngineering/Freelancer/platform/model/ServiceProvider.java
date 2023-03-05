@@ -12,11 +12,11 @@ public class ServiceProvider extends User {
     @Setter
     @Getter
     @Column
-    private double rate;
+    private double rate=0;
     @Setter
     @Getter
     @Column
-    private int numberOfRaters;
+    private int numberOfRaters=0;
     @Setter
     @Getter
     @ManyToMany(cascade = CascadeType.ALL)
@@ -25,18 +25,23 @@ public class ServiceProvider extends User {
             inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private List<Skill> skills;
 
+    @Setter
+    @Getter
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "serviceProvider_categories",
+            joinColumns = @JoinColumn(name = "serviceProvider_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private List<Category> categories;
 
-    public ServiceProvider(String username,String email,List<Skill> skills) {
+
+    public ServiceProvider(String username,String email,List<Skill> skills,List<Category> categories) {
         this.setUsername(username);
         this.setEmail(email);
         this.skills = skills;
-        this.setRate(0);
-        this.setNumberOfRaters(0);
+        this.setCategories(categories);
     }
 
     public ServiceProvider(){
-        this.setRate(0);
-        this.setNumberOfRaters(0);
     }
 
     @Override

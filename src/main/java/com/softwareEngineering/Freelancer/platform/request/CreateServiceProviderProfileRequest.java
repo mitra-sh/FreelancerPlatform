@@ -15,4 +15,7 @@ public class CreateServiceProviderProfileRequest {
     @Setter
     @Getter
     private List<String> skills;
+    @Setter
+    @Getter
+    private List<String> categories;
 }

@@ -1,5 +1,6 @@
 package com.softwareEngineering.Freelancer.platform.service;
 
+import com.softwareEngineering.Freelancer.platform.model.Category;
 import com.softwareEngineering.Freelancer.platform.model.ServiceProvider;
 import com.softwareEngineering.Freelancer.platform.model.Skill;
 import com.softwareEngineering.Freelancer.platform.repository.ServiceProviderRepository;
@@ -23,10 +24,14 @@ public class ServiceProviderService {
 
     public void addServiceProvider(CreateServiceProviderProfileRequest request) {
         List<Skill> skillList = new ArrayList<Skill>();
+        List<Category> categoryList=new ArrayList<Category>();
         for (String title : request.getSkills()) {
             skillList.add(new Skill(title));
         }
-        ServiceProvider serviceProvider = new ServiceProvider(request.getUsername(), request.getEmail(), skillList);
+        for (String categoryName:request.getCategories()){
+            categoryList.add(new Category(categoryName));
+        }
+        ServiceProvider serviceProvider = new ServiceProvider(request.getUsername(), request.getEmail(), skillList,categoryList);
         serviceProviderRepository.save(serviceProvider);
     }
 
