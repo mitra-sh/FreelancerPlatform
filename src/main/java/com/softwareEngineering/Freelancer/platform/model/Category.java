@@ -15,6 +15,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Setter
     @Getter
     @Column
@@ -28,7 +29,10 @@ public class Category {
     public Category(String categoryName) {
         this.categoryName = categoryName;
     }
-    public Category() {
+    public Category() {}
 
+    @Override
+    public String toString() {
+        return "categoryName='" + categoryName + '\'';
     }
 }
