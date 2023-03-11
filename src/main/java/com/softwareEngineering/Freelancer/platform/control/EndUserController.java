@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class EndUserController {
     @Autowired
     private EndUserService endUserService;
-    @Autowired
-    private EndUserRepository endUserRepository;
     @RequestMapping("/createNewServiceRequestForEndUser")
     public void createNewServiceRequest(@RequestBody  RequestForCreatingNewServiceRequest request){
         endUserService.createNewServiceRequestForEndUser(request);
@@ -23,6 +21,11 @@ public class EndUserController {
     @RequestMapping("/signupAsEndUser")
     public void signupAsEndUser(@RequestBody SignUpRequest request){
        endUserService.signUpAsEndUser(request);
+    }
+
+    @RequestMapping("/findTheMostMatchedServiceProvider")
+    public void findTheMostMatchedServiceProvider(){
+
     }
 
 }

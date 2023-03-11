@@ -16,12 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class EndUserService {
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-    @Autowired
     private EndUserRepository endUserRepository;
 
     public void createNewServiceRequestForEndUser(RequestForCreatingNewServiceRequest request) {
-        ServiceRequest ticket=new ServiceRequest(request.getTaskType(),request.getRequirementDescriptions(),
+        ServiceRequest ticket=new ServiceRequest(request.getCategories(),request.getTaskType(),request.getRequirementDescriptions(),
                 request.getTechnicalConstraints(),request.getDeliveryTime());
        EndUser endUser= endUserRepository.findByUsername(request.getUsername());
        endUser.getServiceRequests().add(ticket);

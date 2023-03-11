@@ -4,7 +4,6 @@ import com.softwareEngineering.Freelancer.platform.model.Category;
 import com.softwareEngineering.Freelancer.platform.model.ServiceProvider;
 import com.softwareEngineering.Freelancer.platform.model.Skill;
 import com.softwareEngineering.Freelancer.platform.repository.ServiceProviderRepository;
-import com.softwareEngineering.Freelancer.platform.repository.SkillRepository;
 import com.softwareEngineering.Freelancer.platform.request.CreateServiceProviderProfileRequest;
 import com.softwareEngineering.Freelancer.platform.request.ServiceProviderRatingRequest;
 import com.softwareEngineering.Freelancer.platform.request.ServiceProviderSkillUpdateRequest;
@@ -14,13 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
 @Service
 public class ServiceProviderService {
     @Autowired
     private ServiceProviderRepository serviceProviderRepository;
-    @Autowired
-    private SkillRepository skillRepository;
+
 
     public void addServiceProvider(CreateServiceProviderProfileRequest request) {
         List<Skill> skillList = new ArrayList<Skill>();

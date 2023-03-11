@@ -26,6 +26,11 @@ public class Category {
     @Getter
     private List<ServiceProvider> serviceProviders=new ArrayList<ServiceProvider>();
 
+    @ManyToMany(mappedBy = "relatedCategories")
+    @Setter
+    @Getter
+    private List<ServiceRequest> serviceRequests=new ArrayList<ServiceRequest>();
+
     public Category(String categoryName) {
         this.categoryName = categoryName;
     }
