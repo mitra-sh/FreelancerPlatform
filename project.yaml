@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: freelancer
+ template:
+  spec:  
+   containers:
+   - name: freelancer
+     image: mitrash/freelancer
+     ports:
+      - containerPort: 7120
+
