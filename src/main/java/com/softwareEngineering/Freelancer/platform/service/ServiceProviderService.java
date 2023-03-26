@@ -68,7 +68,7 @@ public class ServiceProviderService {
         }
     }
 
-    public List<ServiceProvider>  findTheMostMatchedServiceProvider(MostMatchedServiceProviderRequest request) {
+    public ServiceProvider  findTheMostMatchedServiceProvider(MostMatchedServiceProviderRequest request) {
         List<ServiceProvider> finalListOfServiceProviders = new ArrayList<ServiceProvider>();
         List<ServiceProvider> listOfServiceProviders = new ArrayList<ServiceProvider>();
 
@@ -90,7 +90,7 @@ public class ServiceProviderService {
         Collections.sort(finalListOfServiceProviders, byRateDesc);
 
         if (finalListOfServiceProviders != null) {
-            return finalListOfServiceProviders;
+            return finalListOfServiceProviders.get(0);
         }
         else throw new RuntimeException("no matched found");
     }
