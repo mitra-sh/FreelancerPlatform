@@ -23,9 +23,6 @@ public class EndUserController {
        endUserService.signUpAsEndUser(request);
     }
 
-    @RequestMapping("/findTheMostMatchedServiceProvider")
-    public void findTheMostMatchedServiceProvider(){
 
-    }
 
 }

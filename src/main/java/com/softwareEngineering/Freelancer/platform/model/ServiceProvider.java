@@ -33,6 +33,9 @@ public class ServiceProvider extends User {
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
 
+    @Setter
+    @Getter
+    public int numberOfMatchedSkills=0;
 
     public ServiceProvider(String username,String email,List<Skill> skills,List<Category> categories) {
         this.setUsername(username);
@@ -52,6 +55,6 @@ public class ServiceProvider extends User {
                 ", skills=" + skills +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                '}';
+                '}'+"\n";
     }
 }
