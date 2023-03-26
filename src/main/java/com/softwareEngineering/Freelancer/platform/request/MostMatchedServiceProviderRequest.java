@@ -10,6 +10,4 @@ import java.util.List;
 public class MostMatchedServiceProviderRequest {
     @Setter @Getter
     public List<String> skills;
-    @Setter @Getter
-    public List<String> categories;
 }
