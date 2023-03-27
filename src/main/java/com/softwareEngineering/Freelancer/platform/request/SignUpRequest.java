@@ -11,4 +11,5 @@ public class SignUpRequest {
     @Setter
     @Getter
     public String email;
+    //to be added
 }

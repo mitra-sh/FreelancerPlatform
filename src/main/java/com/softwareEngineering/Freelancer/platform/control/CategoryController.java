@@ -15,8 +15,8 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @RequestMapping("/showAllCategories")
-    public String showAllCategories() {
+    public ResponseEntity showAllCategories() {
         String categories=categoryService.showAllCategories();
-        return categories;
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(categories);
     }
 }

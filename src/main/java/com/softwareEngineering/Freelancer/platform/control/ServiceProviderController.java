@@ -7,6 +7,8 @@ import com.softwareEngineering.Freelancer.platform.request.ServiceProviderRating
 import com.softwareEngineering.Freelancer.platform.request.ServiceProviderSkillUpdateRequest;
 import com.softwareEngineering.Freelancer.platform.service.ServiceProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,27 +21,35 @@ public class ServiceProviderController {
     private ServiceProviderService serviceProviderService;
 
     @RequestMapping("/createServiceProviderProfile")
-    public void createServiceProviderProfile(@RequestBody CreateServiceProviderProfileRequest request) {
+    public ResponseEntity createServiceProviderProfile(@RequestBody CreateServiceProviderProfileRequest request) {
         serviceProviderService.addServiceProvider(request);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("The service provider profile successfully created" );
     }
 
     @RequestMapping("/showAllServiceProviders")
-    public String showAllServiceProviders() {
-        return serviceProviderService.showAllServiceProviders().toString();
+    public ResponseEntity showAllServiceProviders() {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).
+                body(serviceProviderService.showAllServiceProviders().toString());
+
     }
 
     @RequestMapping("/updateServiceProviderSkills")
-    public void updateServiceProviderSkills(@RequestBody ServiceProviderSkillUpdateRequest request) {
+    public ResponseEntity updateServiceProviderSkills(@RequestBody ServiceProviderSkillUpdateRequest request) {
         serviceProviderService.updateServiceProviderSkills(request);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("The service provider profile was successfully updated" );
     }
 
     @RequestMapping("/rateAServiceProvider")
-    public void rateAServiceProvider(@RequestBody ServiceProviderRatingRequest request) {
+    public ResponseEntity rateAServiceProvider(@RequestBody ServiceProviderRatingRequest request) {
         serviceProviderService.rateAServiceProvider(request);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("The rating for the service provider was successfully submitted" );
     }
 
     @RequestMapping("/findTheMostMatchedServiceProvider")
-    public void findTheMostMatchedServiceProvider(@RequestBody MostMatchedServiceProviderRequest request) {
-        System.out.println( serviceProviderService.findTheMostMatchedServiceProvider(request));
+    public ResponseEntity findTheMostMatchedServiceProvider(@RequestBody MostMatchedServiceProviderRequest request) {
+        System.out.println( );
+        return ResponseEntity.status(HttpStatus.ACCEPTED).
+                body("The most matched service provider is : "+"\n"
+                        +serviceProviderService.findTheMostMatchedServiceProvider(request));
     }
 }
