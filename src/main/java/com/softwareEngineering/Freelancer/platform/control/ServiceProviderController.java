@@ -49,9 +49,9 @@ public class ServiceProviderController {
     }
 
     @RequestMapping("/findTheMostMatchedServiceProvider")
-    public ResponseEntity findTheMostMatchedServiceProvider(@RequestBody MostMatchedServiceProviderRequest request) {
+    public ResponseEntity findTheMostMatchedServiceProvider(@RequestBody String username) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body("The most matched service provider is : "+"\n"
-                        +serviceProviderService.findTheMostMatchedServiceProviderForAUser(request.getUsername()));
+                        +serviceProviderService.findTheMostMatchedServiceProviderForAUser(username));
     }
 }
