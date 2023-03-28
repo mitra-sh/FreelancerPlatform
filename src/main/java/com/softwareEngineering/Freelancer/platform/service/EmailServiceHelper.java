@@ -1,11 +1,11 @@
-package com.softwareEngineering.Freelancer.platform.model;
+package com.softwareEngineering.Freelancer.platform.service;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
-public class EmailSender {
+public class EmailServiceHelper {
 
     public static void sendInvitation(String recipientEmail, String senderEmail, String senderPassword) throws MessagingException {
 
