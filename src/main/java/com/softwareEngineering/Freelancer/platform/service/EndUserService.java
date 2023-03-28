@@ -20,14 +20,14 @@ public class EndUserService {
 
     public void createNewServiceRequestForEndUser(RequestForCreatingNewServiceRequest request) {
         ServiceRequest ticket=new ServiceRequest(request.getCategories(),request.getTaskType(),request.getRequirementDescriptions(),
-                request.getTechnicalConstraints(),request.getDeliveryTime());
+                request.getTechnicalConstraints(),request.getDeliveryTime(),request.getRequiredSkills());
        EndUser endUser= endUserRepository.findByUsername(request.getUsername());
        endUser.getServiceRequests().add(ticket);
        endUserRepository.save(endUser);
 
     }
     public void signUpAsEndUser(SignUpRequest request){
-       EndUser endUser= new EndUser(request.getUsername(),request.getEmail());
+       EndUser endUser= new EndUser(request.getUsername(),request.getEmail(),request.getFirstName(),request.getLastName());
         endUserRepository.save(endUser);
     }
 

@@ -26,4 +26,7 @@ public class RequestForCreatingNewServiceRequest {
     @Setter
     @Getter
     private List<Category> categories;
+    @Setter
+    @Getter
+    private List<String> requiredSkills;
 }

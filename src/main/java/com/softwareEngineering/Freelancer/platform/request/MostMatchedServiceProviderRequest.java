@@ -9,5 +9,5 @@ import java.util.List;
 
 public class MostMatchedServiceProviderRequest {
     @Setter @Getter
-    public List<String> skills;
+    public String username;
 }

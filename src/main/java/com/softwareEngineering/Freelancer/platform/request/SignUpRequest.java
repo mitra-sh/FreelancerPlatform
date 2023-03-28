@@ -11,5 +11,10 @@ public class SignUpRequest {
     @Setter
     @Getter
     public String email;
-    //to be added
+    @Setter
+    @Getter
+    public String firstName;
+    @Setter
+    @Getter
+    public String lastName;
 }
