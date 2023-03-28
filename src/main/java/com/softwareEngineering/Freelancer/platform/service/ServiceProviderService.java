@@ -72,7 +72,6 @@ public class ServiceProviderService {
 
     public ServiceProvider findTheMostMatchedServiceProviderForAUser(String username) {
         EndUser endUser=endUserRepository.findByUsername(username);
-        // List<ServiceProvider> finalListOfServiceProviders = new ArrayList<ServiceProvider>();
         List<ServiceProvider> listOfServiceProviders = new ArrayList<ServiceProvider>();
 
         for (ServiceRequest serviceRequest : endUser.getServiceRequests()) {
@@ -83,13 +82,6 @@ public class ServiceProviderService {
                         int numberOfMatchedSkills = serviceProvider.getNumberOfMatchedSkills();
                         numberOfMatchedSkills++;
                         serviceProvider.setNumberOfMatchedSkills(numberOfMatchedSkills);
-                        // if (!finalListOfServiceProviders.contains(serviceProvider)) {
-                        //        finalListOfServiceProviders.add(serviceProvider);
-                        //   }
-                        //    else {
-                        //        int index=finalListOfServiceProviders.indexOf(serviceProvider);
-                        //        finalListOfServiceProviders.set(index)
-                        //     }
 
                     }
                 } else
