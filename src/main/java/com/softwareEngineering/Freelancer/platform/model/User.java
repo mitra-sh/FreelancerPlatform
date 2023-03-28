@@ -22,4 +22,12 @@ public class User {
     @Getter
     @Column
     public String email;
+    @Setter
+    @Getter
+    @Column
+    public String firstName;
+    @Setter
+    @Getter
+    @Column
+    public String lastName;
 }

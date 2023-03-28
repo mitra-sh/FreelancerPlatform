@@ -33,6 +33,10 @@ public class ServiceRequest {
     private LocalDate deliveryTime;
     @Setter
     @Getter
+    @Column
+    private List<String> requiredSkills;
+    @Setter
+    @Getter
     @ManyToMany(mappedBy = "serviceRequests")
     private List<EndUser> endUsers;
     @Setter
@@ -43,12 +47,14 @@ public class ServiceRequest {
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> relatedCategories;
 
-    public ServiceRequest(List<Category> categories,String taskType, String requirementDescriptions, String technicalConstraints, LocalDate deliveryTime) {
+    public ServiceRequest(List<Category> categories,String taskType, String requirementDescriptions,
+                          String technicalConstraints, LocalDate deliveryTime,List<String> requiredSkills) {
         this.taskType = taskType;
         this.requirementDescriptions = requirementDescriptions;
         this.technicalConstraints = technicalConstraints;
         this.deliveryTime = deliveryTime;
         this.relatedCategories=categories;
+        this.setRequiredSkills(requiredSkills);
     }
 
     public ServiceRequest() {}

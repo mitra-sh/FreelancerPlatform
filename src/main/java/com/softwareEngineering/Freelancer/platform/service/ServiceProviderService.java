@@ -1,8 +1,7 @@
 package com.softwareEngineering.Freelancer.platform.service;
 
-import com.softwareEngineering.Freelancer.platform.model.Category;
-import com.softwareEngineering.Freelancer.platform.model.ServiceProvider;
-import com.softwareEngineering.Freelancer.platform.model.Skill;
+import com.softwareEngineering.Freelancer.platform.model.*;
+import com.softwareEngineering.Freelancer.platform.repository.EndUserRepository;
 import com.softwareEngineering.Freelancer.platform.repository.ServiceProviderRepository;
 import com.softwareEngineering.Freelancer.platform.repository.SkillRepository;
 import com.softwareEngineering.Freelancer.platform.request.CreateServiceProviderProfileRequest;
@@ -17,12 +16,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 @Service
 public class ServiceProviderService {
     @Autowired
     private ServiceProviderRepository serviceProviderRepository;
     @Autowired
     private SkillRepository skillRepository;
+    @Autowired
+    private EndUserRepository endUserRepository;
 
 
     public void addServiceProvider(CreateServiceProviderProfileRequest request) {
@@ -68,30 +70,35 @@ public class ServiceProviderService {
         }
     }
 
-    public ServiceProvider  findTheMostMatchedServiceProvider(MostMatchedServiceProviderRequest request) {
-        List<ServiceProvider> finalListOfServiceProviders = new ArrayList<ServiceProvider>();
+    public ServiceProvider findTheMostMatchedServiceProviderForAUser(String username) {
+        EndUser endUser=endUserRepository.findByUsername(username);
+        // List<ServiceProvider> finalListOfServiceProviders = new ArrayList<ServiceProvider>();
         List<ServiceProvider> listOfServiceProviders = new ArrayList<ServiceProvider>();
 
-        for (String skillTitle : request.getSkills()) {
-            listOfServiceProviders = serviceProviderRepository.findBySkillsSkillTitle(skillTitle);
-            if(listOfServiceProviders!=null){
-                for (ServiceProvider serviceProvider:listOfServiceProviders){
-                    int numberOfMatchedSkills=serviceProvider.getNumberOfMatchedSkills();
-                    numberOfMatchedSkills++;
-                    serviceProvider.setNumberOfMatchedSkills(numberOfMatchedSkills);
-                    if(!finalListOfServiceProviders.contains(serviceProvider)) {
-                        finalListOfServiceProviders.add(serviceProvider);
-                    }
+        for (ServiceRequest serviceRequest : endUser.getServiceRequests()) {
+            for (String skillTitle : serviceRequest.getRequiredSkills()) {
+                listOfServiceProviders = serviceProviderRepository.findBySkillsSkillTitle(skillTitle);
+                if (listOfServiceProviders != null) {
+                    for (ServiceProvider serviceProvider : listOfServiceProviders) {
+                        int numberOfMatchedSkills = serviceProvider.getNumberOfMatchedSkills();
+                        numberOfMatchedSkills++;
+                        serviceProvider.setNumberOfMatchedSkills(numberOfMatchedSkills);
+                        // if (!finalListOfServiceProviders.contains(serviceProvider)) {
+                        //        finalListOfServiceProviders.add(serviceProvider);
+                        //   }
+                        //    else {
+                        //        int index=finalListOfServiceProviders.indexOf(serviceProvider);
+                        //        finalListOfServiceProviders.set(index)
+                        //     }
 
-                }
+                    }
+                } else
+                    throw new RuntimeException("No service provider is found to match the required skills of the service ticket");
             }
         }
         Comparator<ServiceProvider> byRateDesc = Comparator.comparing(ServiceProvider::getNumberOfMatchedSkills, Comparator.reverseOrder());
-        Collections.sort(finalListOfServiceProviders, byRateDesc);
+        Collections.sort(listOfServiceProviders, byRateDesc);
 
-        if (finalListOfServiceProviders != null) {
-            return finalListOfServiceProviders.get(0);
-        }
-        else throw new RuntimeException("no matched found");
+        return listOfServiceProviders.get(0);
     }
 }

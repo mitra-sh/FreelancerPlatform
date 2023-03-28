@@ -18,9 +18,11 @@ public class EndUser extends User{
             inverseJoinColumns = @JoinColumn(name = "serviceRequest_id"))
     private List<ServiceRequest> serviceRequests;
 
-    public EndUser(String username,String email) {
+    public EndUser(String username,String email,String firstName,String lastName) {
        this.setUsername(username);
        this.setEmail(email);
+       this.setFirstName(firstName);
+       this.setLastName(lastName);
         this.serviceRequests = new ArrayList<ServiceRequest>();
     }
     public EndUser() {

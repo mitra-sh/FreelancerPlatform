@@ -1,5 +1,6 @@
 package com.softwareEngineering.Freelancer.platform.control;
 
+import com.softwareEngineering.Freelancer.platform.model.EndUser;
 import com.softwareEngineering.Freelancer.platform.model.ServiceProvider;
 import com.softwareEngineering.Freelancer.platform.request.CreateServiceProviderProfileRequest;
 import com.softwareEngineering.Freelancer.platform.request.MostMatchedServiceProviderRequest;
@@ -47,9 +48,8 @@ public class ServiceProviderController {
 
     @RequestMapping("/findTheMostMatchedServiceProvider")
     public ResponseEntity findTheMostMatchedServiceProvider(@RequestBody MostMatchedServiceProviderRequest request) {
-        System.out.println( );
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body("The most matched service provider is : "+"\n"
-                        +serviceProviderService.findTheMostMatchedServiceProvider(request));
+                        +serviceProviderService.findTheMostMatchedServiceProviderForAUser(request.getUsername()));
     }
 }
