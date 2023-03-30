@@ -1,10 +1,9 @@
 package com.softwareEngineering.Freelancer.platform.request;
 
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
-public class SignUpRequest {
+public class CreateAccountRequest {
     @Setter
     @Getter
     public String username;
@@ -13,8 +12,14 @@ public class SignUpRequest {
     public String email;
     @Setter
     @Getter
-    public String firstName;
+    public String firstname;
     @Setter
     @Getter
-    public String lastName;
+    public String lastname;
+    @Setter
+    @Getter
+    public String password;
+    @Setter
+    @Getter
+    public String type;
 }

@@ -37,6 +37,14 @@ public class ServiceProvider extends User {
     @Getter
     public int numberOfMatchedSkills=0;
 
+    public ServiceProvider(String username,String email,String firstName,String lastName,String password,String type) {
+        this.setUsername(username);
+        this.setEmail(email);
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
+        this.setPassword(password);
+        this.setType(type);
+    }
     public ServiceProvider(String username,String email,List<Skill> skills,List<Category> categories) {
         this.setUsername(username);
         this.setEmail(email);
@@ -53,8 +61,12 @@ public class ServiceProvider extends User {
                 "rate=" + rate +
                 ", numberOfRaters=" + numberOfRaters +
                 ", skills=" + skills +
+                ", categories=" + categories +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                '}'+"\n";
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", type='" + type + '\'' +
+                '}';
     }
 }

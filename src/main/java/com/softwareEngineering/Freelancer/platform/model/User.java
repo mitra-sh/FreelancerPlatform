@@ -30,4 +30,14 @@ public class User {
     @Getter
     @Column
     public String lastName;
+    @Setter
+    @Getter
+    @Column
+    public String password;
+
+    @Setter
+    @Getter
+    @Column
+    public String type;
+
 }

@@ -4,8 +4,8 @@ import com.softwareEngineering.Freelancer.platform.model.*;
 import com.softwareEngineering.Freelancer.platform.repository.EndUserRepository;
 import com.softwareEngineering.Freelancer.platform.repository.ServiceProviderRepository;
 import com.softwareEngineering.Freelancer.platform.repository.SkillRepository;
+import com.softwareEngineering.Freelancer.platform.request.CreateAccountRequest;
 import com.softwareEngineering.Freelancer.platform.request.CreateServiceProviderProfileRequest;
-import com.softwareEngineering.Freelancer.platform.request.MostMatchedServiceProviderRequest;
 import com.softwareEngineering.Freelancer.platform.request.ServiceProviderRatingRequest;
 import com.softwareEngineering.Freelancer.platform.request.ServiceProviderSkillUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,22 @@ public class ServiceProviderService {
     private EndUserRepository endUserRepository;
 
 
+    public void createNewServiceProvider(CreateAccountRequest request){
+        ServiceProvider serviceProvider=new ServiceProvider(request.getUsername(),request.getEmail(),
+                request.getFirstname(),request.getLastname(),request.getPassword(),request.getType());
+        serviceProviderRepository.save(serviceProvider);
+    }
+    public ServiceProvider findServiceProviderByUsername(String username){
+        ServiceProvider serviceProvider=serviceProviderRepository.findByUsername(username);
+        return serviceProvider;
+    }
+    public ServiceProvider findServiceProviderByEmail(String email){
+        return serviceProviderRepository.findByEmail(email);
+    }
+
+    public void deleteServiceProvider(ServiceProvider serviceProvider){
+        serviceProviderRepository.delete(serviceProvider);
+    }
     public void addServiceProvider(CreateServiceProviderProfileRequest request) {
         List<Skill> skillList = new ArrayList<Skill>();
         List<Category> categoryList = new ArrayList<Category>();
@@ -73,7 +89,7 @@ public class ServiceProviderService {
     public ServiceProvider findTheMostMatchedServiceProviderForAUser(String username) {
         EndUser endUser=endUserRepository.findByUsername(username);
         List<ServiceProvider> listOfServiceProviders = new ArrayList<ServiceProvider>();
-
+//probably might not work for two
         for (ServiceRequest serviceRequest : endUser.getServiceRequests()) {
             for (String skillTitle : serviceRequest.getRequiredSkills()) {
                 listOfServiceProviders = serviceProviderRepository.findBySkillsSkillTitle(skillTitle);

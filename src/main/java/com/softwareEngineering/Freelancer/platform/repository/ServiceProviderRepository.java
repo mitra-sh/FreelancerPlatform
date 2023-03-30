@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface ServiceProviderRepository extends JpaRepository<ServiceProvider,Long> {
     ServiceProvider findByUsername(String username);
+    ServiceProvider findByEmail(String email);
     List<ServiceProvider> findBySkillsSkillTitle(String skillTitle);
 
 }
