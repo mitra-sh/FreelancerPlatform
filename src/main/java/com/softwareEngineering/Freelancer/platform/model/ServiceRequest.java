@@ -1,5 +1,6 @@
 package com.softwareEngineering.Freelancer.platform.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,14 +38,24 @@ public class ServiceRequest {
     private List<String> requiredSkills;
     @Setter
     @Getter
+    @Column
+    private int ticketNumber=0;
+    @Setter
+    @Getter
     @ManyToMany(mappedBy = "serviceRequests")
     private List<EndUser> endUsers;
     @Setter
     @Getter
+    @ManyToMany(mappedBy = "serviceRequests")
+    private List<ServiceProvider> serviceProviders;
+    @Setter
+    @Getter
     @ManyToMany(cascade = CascadeType.ALL)
+
     @JoinTable(name = "serviceRequest_categories",
             joinColumns = @JoinColumn(name = "serviceRequest_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @JsonIgnore
     private List<Category> relatedCategories;
 
     public ServiceRequest(List<Category> categories,String taskType, String requirementDescriptions,
@@ -55,6 +66,21 @@ public class ServiceRequest {
         this.deliveryTime = deliveryTime;
         this.relatedCategories=categories;
         this.setRequiredSkills(requiredSkills);
+        this.setTicketNumber(++ticketNumber);
+    }
+
+    @Override
+    public String toString() {
+        return "ServiceRequest{" +
+                "id=" + id +
+                ", taskType='" + taskType + '\'' +
+                ", requirementDescriptions='" + requirementDescriptions + '\'' +
+                ", technicalConstraints='" + technicalConstraints + '\'' +
+                ", deliveryTime=" + deliveryTime.toString() +
+                ", requiredSkills=" + requiredSkills.toString() +
+                ", relatedCategories=" + relatedCategories.toString() +
+
+                '}';
     }
 
     public ServiceRequest() {}

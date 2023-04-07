@@ -25,12 +25,20 @@ public class ServiceProviderService {
     private SkillRepository skillRepository;
     @Autowired
     private EndUserRepository endUserRepository;
+    @Autowired
+    private ServiceRequestService serviceRequestService;
 
 
     public void createNewServiceProvider(CreateAccountRequest request){
         ServiceProvider serviceProvider=new ServiceProvider(request.getUsername(),request.getEmail(),
                 request.getFirstname(),request.getLastname(),request.getPassword(),request.getType());
-        serviceProviderRepository.save(serviceProvider);
+        if(serviceProviderRepository.findByUsername(serviceProvider.getUsername())==null) {
+            serviceProviderRepository.save(serviceProvider);
+        }
+        else throw new RuntimeException("The username is taken. you must use a unique username");
+    }
+    public ServiceProvider findServiceProviderByUsernameAndPassword(String username,String password){
+        return serviceProviderRepository.findByUsernameAndPassword(username,password);
     }
     public ServiceProvider findServiceProviderByUsername(String username){
         ServiceProvider serviceProvider=serviceProviderRepository.findByUsername(username);
@@ -61,7 +69,7 @@ public class ServiceProviderService {
     }
 
     @Transactional
-    public void updateServiceProviderSkills(ServiceProviderSkillUpdateRequest request) {
+    public ServiceProvider updateServiceProviderSkills(ServiceProviderSkillUpdateRequest request) {
         ServiceProvider serviceProvider = serviceProviderRepository.findByUsername(request.getUsername());
         List<Skill> newSkillSet = new ArrayList<>();
         for (String newSkillTitle : request.getSkills()) {
@@ -70,6 +78,7 @@ public class ServiceProviderService {
         }
         serviceProvider.setSkills(newSkillSet);
         serviceProviderRepository.save(serviceProvider);
+        return serviceProvider;
     }
 
     @Transactional
@@ -109,4 +118,19 @@ public class ServiceProviderService {
 
         return listOfServiceProviders.get(0);
     }
+    public ServiceProvider acceptTicket(String username, Long ticketId){
+        ServiceProvider serviceProvider=findServiceProviderByUsername(username);
+        ServiceRequest serviceRequest=serviceRequestService.findTicketByTicketNumber(ticketId);
+        if(serviceProvider.getServiceRequests()!=null) {
+            serviceProvider.getServiceRequests().add(serviceRequest);
+        }
+        else {
+            List<ServiceRequest> tickets=new ArrayList<ServiceRequest>();
+            tickets.add(serviceRequest);
+            serviceProvider.setServiceRequests(tickets);
+        }
+        serviceProviderRepository.save(serviceProvider);
+        return serviceProvider;
+    }
+
 }

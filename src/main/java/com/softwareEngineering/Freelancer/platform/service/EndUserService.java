@@ -19,7 +19,10 @@ public class EndUserService {
     public void createNewEndUser(CreateAccountRequest request) {
         EndUser endUser = new EndUser(request.getUsername(), request.getEmail(),
                 request.getFirstname(), request.getLastname(),request.getPassword(),request.getType());
-        endUserRepository.save(endUser);
+        if(endUserRepository.findByUsername(endUser.getUsername())==null) {
+            endUserRepository.save(endUser);
+        }
+        else throw new RuntimeException("The username is taken. you must use a unique username");
     }
 
     public void createNewServiceRequestForEndUser(RequestForCreatingNewServiceRequest request) {
@@ -28,11 +31,13 @@ public class EndUserService {
         EndUser endUser = endUserRepository.findByUsername(request.getUsername());
         endUser.getServiceRequests().add(ticket);
         endUserRepository.save(endUser);
-
     }
 
     public EndUser findEndUserByUsername(String username) {
        return endUserRepository.findByUsername(username);
+    }
+    public EndUser findEndUserByUsernameAndPassword(String username,String password) {
+        return endUserRepository.findByUsernameAndPassword(username,password);
     }
     public EndUser findEndUserByEmail(String email) {
         return endUserRepository.findByEmail(email);

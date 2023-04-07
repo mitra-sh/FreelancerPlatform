@@ -3,9 +3,9 @@ package com.softwareEngineering.Freelancer.platform.request;
 import lombok.Getter;
 import lombok.Setter;
 
-public class LoginRequest {
+public class AcceptTicketRequest {
     @Setter @Getter
-    String username;
+    public Long ticketNumber;
     @Setter @Getter
-    String password;
+    public String username;
 }

@@ -3,9 +3,7 @@ package com.softwareEngineering.Freelancer.platform.request;
 import lombok.Getter;
 import lombok.Setter;
 
-public class LoginRequest {
+public class EmailRequest {
     @Setter @Getter
-    String username;
-    @Setter @Getter
-    String password;
+    private String email;
 }

@@ -2,6 +2,7 @@ package com.softwareEngineering.Freelancer.platform.control;
 
 import com.softwareEngineering.Freelancer.platform.model.EndUser;
 import com.softwareEngineering.Freelancer.platform.model.ServiceProvider;
+import com.softwareEngineering.Freelancer.platform.request.UsernameRequest;
 import com.softwareEngineering.Freelancer.platform.service.EndUserService;
 import com.softwareEngineering.Freelancer.platform.service.ServiceProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,9 @@ public class AdminController {
     private EndUserService endUserService;
 
     @RequestMapping("/admin/deleteAccount")
-    public ResponseEntity deleteAccount(@RequestBody String username) {
-        ServiceProvider serviceProvider = serviceProviderService.findServiceProviderByUsername(username);
-        EndUser endUser = endUserService.findEndUserByUsername(username);
+    public ResponseEntity deleteAccount(@RequestBody UsernameRequest request) {
+        ServiceProvider serviceProvider = serviceProviderService.findServiceProviderByUsername(request.getUsername());
+        EndUser endUser = endUserService.findEndUserByUsername(request.getUsername());
         if (serviceProvider != null) {
             serviceProviderService.deleteServiceProvider(serviceProvider);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("the service provider was deleted");

@@ -1,6 +1,7 @@
 package com.softwareEngineering.Freelancer.platform.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ public class EndUser extends User {
     @Setter
     @Getter
     @ManyToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
     @JoinTable(name = "endUser_ServiceRequest",
             joinColumns = @JoinColumn(name = "endUser_id"),
             inverseJoinColumns = @JoinColumn(name = "serviceRequest_id"))
