@@ -5,7 +5,8 @@ import lombok.Setter;
 
 public class AcceptTicketRequest {
     @Setter @Getter
-    public Long ticketNumber;
+    private String username;
     @Setter @Getter
-    public String username;
+    private int ticketNumber;
+
 }

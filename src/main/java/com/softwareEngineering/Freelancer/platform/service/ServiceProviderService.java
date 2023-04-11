@@ -118,8 +118,8 @@ public class ServiceProviderService {
 
         return listOfServiceProviders.get(0);
     }
-    public ServiceProvider acceptTicket(String username, Long ticketId){
-        ServiceProvider serviceProvider=findServiceProviderByUsername(username);
+    public ServiceProvider acceptTicket(String username, int ticketId){
+        ServiceProvider serviceProvider=serviceProviderRepository.findByUsername(username);
         ServiceRequest serviceRequest=serviceRequestService.findTicketByTicketNumber(ticketId);
         if(serviceProvider.getServiceRequests()!=null) {
             serviceProvider.getServiceRequests().add(serviceRequest);

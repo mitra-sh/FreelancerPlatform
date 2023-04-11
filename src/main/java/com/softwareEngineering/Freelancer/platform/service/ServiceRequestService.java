@@ -15,7 +15,7 @@ public class ServiceRequestService {
     public List<ServiceRequest> viewAllTickets(){
         return serviceRequestRepository.findAll();
     }
-    public ServiceRequest findTicketByTicketNumber(Long id){
-        return  serviceRequestRepository.findByTicketNumber(id);
+    public ServiceRequest findTicketByTicketNumber(int id){
+        return  serviceRequestRepository.findByTicketNumber(Long.valueOf(id));
     }
 }

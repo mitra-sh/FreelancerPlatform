@@ -32,7 +32,6 @@ public class ServiceProvider extends User {
     @Setter
     @Getter
     @ManyToMany(cascade = CascadeType.ALL)
-    @JsonIgnore
     @JoinTable(name = "serviceProvider_ServiceRequest",
             joinColumns = @JoinColumn(name = "serviceProvider_id"),
             inverseJoinColumns = @JoinColumn(name = "serviceRequest_id"))

@@ -40,12 +40,14 @@ public class ServiceRequest {
     @Getter
     @Column
     private int ticketNumber=0;
+
     @Setter
     @Getter
     @ManyToMany(mappedBy = "serviceRequests")
     private List<EndUser> endUsers;
     @Setter
     @Getter
+    @JsonIgnore
     @ManyToMany(mappedBy = "serviceRequests")
     private List<ServiceProvider> serviceProviders;
     @Setter

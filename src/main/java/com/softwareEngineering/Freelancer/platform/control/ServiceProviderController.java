@@ -2,10 +2,13 @@ package com.softwareEngineering.Freelancer.platform.control;
 
 import com.softwareEngineering.Freelancer.platform.model.ServiceProvider;
 import com.softwareEngineering.Freelancer.platform.model.ServiceRequest;
+import com.softwareEngineering.Freelancer.platform.model.Skill;
 import com.softwareEngineering.Freelancer.platform.repository.ServiceRequestRepository;
 import com.softwareEngineering.Freelancer.platform.request.*;
 import com.softwareEngineering.Freelancer.platform.service.ServiceProviderService;
 import com.softwareEngineering.Freelancer.platform.service.ServiceRequestService;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,6 +27,8 @@ public class ServiceProviderController {
     private ServiceProviderService serviceProviderService;
     @Autowired
     private ServiceRequestService serviceRequestService;
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
 
 
     @RequestMapping("/createServiceProviderProfile")
@@ -61,16 +67,31 @@ public class ServiceProviderController {
                 body(serviceRequestService.viewAllTickets());
     }
     @RequestMapping("/acceptTicket")
-    public ResponseEntity acceptTicket(AcceptTicketRequest request) {
+    public ResponseEntity acceptTicket(@RequestBody AcceptTicketRequest request) {
        ServiceProvider updatedServiceProvider= serviceProviderService.acceptTicket(request.getUsername(),
                request.getTicketNumber());
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body(updatedServiceProvider);
     }
     @RequestMapping("/viewServiceProviderTickets")
-    public ResponseEntity viewServiceProviderTickets(UsernameRequest request) {
+    public ResponseEntity viewServiceProviderTickets(@RequestBody UsernameRequest request) {
         ServiceProvider serviceProvider=serviceProviderService.findServiceProviderByUsername(request.getUsername());
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body(serviceProvider.getServiceRequests());
+    }
+    @RequestMapping("/searchTicketsBySkills")
+    public ResponseEntity searchTicketsBySkills(@RequestBody SearchTicketRequest request) {
+       List<ServiceRequest> tickets=new ArrayList<ServiceRequest>();
+        List<ServiceRequest> serviceRequests=serviceRequestRepository.findAll();
+       for (String skill:request.getSkills()){
+           for(ServiceRequest serviceRequest:serviceRequests){
+               if (serviceRequest.getRequiredSkills().contains(skill)){
+                   tickets.add(serviceRequest);
+               }
+           }
+       }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).
+                body(tickets);
+
     }
 }
