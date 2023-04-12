@@ -10,6 +10,6 @@ import java.util.List;
 public interface ServiceProviderRepository extends JpaRepository<ServiceProvider,Long> {
     ServiceProvider findByUsername(String username);
     ServiceProvider findByEmail(String email);
-    ServiceProvider findByUsernameAndPassword(String username,String password);
+    ServiceProvider findByEmailAndPassword(String email,String password);
     List<ServiceProvider> findBySkillsSkillTitle(String skillTitle);
 }

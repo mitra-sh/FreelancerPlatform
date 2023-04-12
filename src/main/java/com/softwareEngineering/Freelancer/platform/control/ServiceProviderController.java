@@ -5,6 +5,7 @@ import com.softwareEngineering.Freelancer.platform.model.ServiceRequest;
 import com.softwareEngineering.Freelancer.platform.model.Skill;
 import com.softwareEngineering.Freelancer.platform.repository.ServiceRequestRepository;
 import com.softwareEngineering.Freelancer.platform.request.*;
+import com.softwareEngineering.Freelancer.platform.service.AuditLogService;
 import com.softwareEngineering.Freelancer.platform.service.ServiceProviderService;
 import com.softwareEngineering.Freelancer.platform.service.ServiceRequestService;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,16 +31,13 @@ public class ServiceProviderController {
     private ServiceRequestService serviceRequestService;
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
+    @Autowired
+    private AuditLogService auditLogService;
 
-
-    @RequestMapping("/createServiceProviderProfile")
-    public ResponseEntity createServiceProviderProfile(@RequestBody CreateServiceProviderProfileRequest request) {
-        serviceProviderService.addServiceProvider(request);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("The service provider profile successfully created" );
-    }
 
     @RequestMapping("/showAllServiceProviders")
-    public ResponseEntity showAllServiceProviders() {
+    public ResponseEntity showAllServiceProviders(@RequestBody UsernameRequest request) {
+        auditLogService.log(request.getUsername(),"request to view all service providers","");
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body(serviceProviderService.showAllServiceProviders());
     }
@@ -46,36 +45,56 @@ public class ServiceProviderController {
     @RequestMapping("/updateServiceProviderSkills")
     public ResponseEntity updateServiceProviderSkills(@RequestBody ServiceProviderSkillUpdateRequest request) {
         ServiceProvider serviceProvider=serviceProviderService.updateServiceProviderSkills(request);
+        auditLogService.log(request.getUsername(),"request to update his/her profile","a new info: "+request.toString());
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(serviceProvider );
     }
 
     @RequestMapping("/rateAServiceProvider")
     public ResponseEntity rateAServiceProvider(@RequestBody ServiceProviderRatingRequest request) {
         serviceProviderService.rateAServiceProvider(request);
+        auditLogService.log(request.getUsername(),"rate a service provider","username of service provider: "+request.getUsername());
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("The rating for the service provider was successfully submitted" );
     }
 
     @RequestMapping("/findTheMostMatchedServiceProvider")
     public ResponseEntity findTheMostMatchedServiceProvider(@RequestBody UsernameRequest request) {
+        auditLogService.log("system","finding the most matched service provider","username of service provider: "+request.getUsername());
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body("The most matched service provider is : "+"\n"
                         +serviceProviderService.findTheMostMatchedServiceProviderForAUser(request.getUsername()));
     }
     @RequestMapping("/viewAllTickets")
-    public ResponseEntity viewAllTickets() {
+    public ResponseEntity viewAllTickets(@RequestBody UsernameRequest request) {
+        auditLogService.log(request.getUsername(),"request to view all tickets in the system","");
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body(serviceRequestService.viewAllTickets());
     }
+    @RequestMapping("/viewAllNonTakenTickets")
+    public ResponseEntity viewAllNonTakenTickets(@RequestBody UsernameRequest request) {
+        List<ServiceRequest> listOfTickets=serviceRequestService.viewAllTickets();
+        for (ServiceRequest ticket:listOfTickets){
+            if(ticket.getStatus().equals("taken")){
+                listOfTickets.remove(ticket);
+            }
+        }
+        auditLogService.log(request.getUsername(),"request to view all available tickets in the system","");
+        return ResponseEntity.status(HttpStatus.ACCEPTED).
+                body(listOfTickets);
+    }
+    @Transactional
     @RequestMapping("/acceptTicket")
     public ResponseEntity acceptTicket(@RequestBody AcceptTicketRequest request) {
        ServiceProvider updatedServiceProvider= serviceProviderService.acceptTicket(request.getUsername(),
-               request.getTicketNumber());
+               request.getId());
+        auditLogService.log(request.getUsername(),"accept a ticket","the id of ticket: "+request.getId());
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body(updatedServiceProvider);
     }
     @RequestMapping("/viewServiceProviderTickets")
-    public ResponseEntity viewServiceProviderTickets(@RequestBody UsernameRequest request) {
-        ServiceProvider serviceProvider=serviceProviderService.findServiceProviderByUsername(request.getUsername());
+    public ResponseEntity viewServiceProviderTickets(@RequestBody ViewServiceProviderTicketsRequest request) {
+        ServiceProvider serviceProvider=serviceProviderService.findServiceProviderByUsername(request.getUsernameOfServiceProvider());
+        auditLogService.log(request.getMyUsername(),"request to view all tickets accepted by a particular service provider"
+                ,"the username of service provider: "+request.getUsernameOfServiceProvider());
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body(serviceProvider.getServiceRequests());
     }
@@ -90,6 +109,8 @@ public class ServiceProviderController {
                }
            }
        }
+        auditLogService.log(request.getUsername(),"search a ticket"
+                ,"the filters: "+request.getSkills());
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body(tickets);
 

@@ -3,11 +3,10 @@ package com.softwareEngineering.Freelancer.platform.request;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
-public class SearchTicketRequest {
-    @Setter @Getter
-    private List<String> skills;
-    @Setter @Getter
+public class SearchForUserRequest {
+    @Setter
+    @Getter
     private String username;
+    @Setter @Getter
+    private String myUsername;
 }

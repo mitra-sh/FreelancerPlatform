@@ -25,19 +25,22 @@ public class EndUserService {
         else throw new RuntimeException("The username is taken. you must use a unique username");
     }
 
-    public void createNewServiceRequestForEndUser(RequestForCreatingNewServiceRequest request) {
+    public EndUser createNewServiceRequestForEndUser(RequestForCreatingNewServiceRequest request) {
         ServiceRequest ticket = new ServiceRequest(request.getCategories(), request.getTaskType(), request.getRequirementDescriptions(),
                 request.getTechnicalConstraints(), request.getDeliveryTime(), request.getRequiredSkills());
         EndUser endUser = endUserRepository.findByUsername(request.getUsername());
         endUser.getServiceRequests().add(ticket);
+        int numberOfRequestedTask=endUser.getNumberOfRequestedTask();
+        endUser.setNumberOfRequestedTask(++numberOfRequestedTask);
         endUserRepository.save(endUser);
+        return endUser;
     }
 
     public EndUser findEndUserByUsername(String username) {
        return endUserRepository.findByUsername(username);
     }
-    public EndUser findEndUserByUsernameAndPassword(String username,String password) {
-        return endUserRepository.findByUsernameAndPassword(username,password);
+    public EndUser findEndUserByEmailAndPassword(String email, String password) {
+        return endUserRepository.findByEmailAndPassword(email,password);
     }
     public EndUser findEndUserByEmail(String email) {
         return endUserRepository.findByEmail(email);

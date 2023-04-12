@@ -2,14 +2,11 @@ package com.softwareEngineering.Freelancer.platform.control;
 
 import com.softwareEngineering.Freelancer.platform.model.EndUser;
 import com.softwareEngineering.Freelancer.platform.model.ServiceProvider;
-import com.softwareEngineering.Freelancer.platform.request.CreateAccountRequest;
-import com.softwareEngineering.Freelancer.platform.request.EmailRequest;
-import com.softwareEngineering.Freelancer.platform.request.LoginRequest;
-import com.softwareEngineering.Freelancer.platform.request.UsernameRequest;
+import com.softwareEngineering.Freelancer.platform.request.*;
+import com.softwareEngineering.Freelancer.platform.service.AuditLogService;
 import com.softwareEngineering.Freelancer.platform.service.EndUserService;
 import com.softwareEngineering.Freelancer.platform.service.ServiceProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.AbstractAuditable_;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,14 +21,19 @@ public class UserController {
     private EndUserService endUserService;
     @Autowired
     private ServiceProviderService serviceProviderService;
+    @Autowired
+    private AuditLogService auditLogService;
+
 
     @RequestMapping("/createAccount")
     public ResponseEntity createAccount(@RequestBody CreateAccountRequest request) {
         if (request.getType().equals("client") ) {
             endUserService.createNewEndUser(request);
+            auditLogService.log(request.getUsername(),"registered to the system","the role: "+request.getType());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(request);
         } else if (request.getType().equals("service provider")){
             serviceProviderService.createNewServiceProvider(request);
+            auditLogService.log(request.getUsername(),"registered to the system","the role: "+request.getType());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(request);
         }
         else if (request.getType().equals("admin")) {
@@ -55,24 +57,28 @@ public class UserController {
     }
 
     @RequestMapping("/findUserByUsername")
-    public ResponseEntity findUserByUsername(@RequestBody UsernameRequest request) {
+    public ResponseEntity findUserByUsername(@RequestBody SearchForUserRequest request) {
         ServiceProvider serviceProvider = serviceProviderService.findServiceProviderByUsername(request.getUsername());
         EndUser endUser = endUserService.findEndUserByUsername(request.getUsername());
         if (serviceProvider != null) {
+            auditLogService.log(request.getMyUsername(),"search for a user","the filter: "+request.getUsername());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(serviceProvider);
         } else if (endUser != null) {
+            auditLogService.log(request.getMyUsername(),"search for a user","the filter: "+request.getUsername());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(endUser);
         } else return ResponseEntity.status(HttpStatus.ACCEPTED).body("there is no user registered with this email");
     }
 
     @RequestMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest request) {
-        ServiceProvider serviceProvider = serviceProviderService.findServiceProviderByUsernameAndPassword
-                (request.getUsername(), request.getPassword());
-        EndUser endUser = endUserService.findEndUserByUsernameAndPassword(request.getUsername(), request.getPassword());
+        ServiceProvider serviceProvider = serviceProviderService.findServiceProviderByEmailAndPassword
+                (request.getEmail(), request.getPassword());
+        EndUser endUser = endUserService.findEndUserByEmailAndPassword(request.getEmail(), request.getPassword());
         if (serviceProvider != null) {
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(serviceProvider);
+            auditLogService.log(serviceProvider.getUsername(),"logged in to the system"," ");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(serviceProvider);
         } else if(endUser!=null) {
+            auditLogService.log(endUser.getUsername(),"logged in to the system"," ");
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(endUser);
         } else return ResponseEntity.status(HttpStatus.ACCEPTED).body("there is no user registered with this username and password");
     }

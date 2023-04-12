@@ -3,6 +3,7 @@ package com.softwareEngineering.Freelancer.platform.service;
 import com.softwareEngineering.Freelancer.platform.model.*;
 import com.softwareEngineering.Freelancer.platform.repository.EndUserRepository;
 import com.softwareEngineering.Freelancer.platform.repository.ServiceProviderRepository;
+import com.softwareEngineering.Freelancer.platform.repository.ServiceRequestRepository;
 import com.softwareEngineering.Freelancer.platform.repository.SkillRepository;
 import com.softwareEngineering.Freelancer.platform.request.CreateAccountRequest;
 import com.softwareEngineering.Freelancer.platform.request.CreateServiceProviderProfileRequest;
@@ -12,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ServiceProviderService {
@@ -26,7 +24,7 @@ public class ServiceProviderService {
     @Autowired
     private EndUserRepository endUserRepository;
     @Autowired
-    private ServiceRequestService serviceRequestService;
+    private ServiceRequestRepository serviceRequestRepository;
 
 
     public void createNewServiceProvider(CreateAccountRequest request){
@@ -37,8 +35,8 @@ public class ServiceProviderService {
         }
         else throw new RuntimeException("The username is taken. you must use a unique username");
     }
-    public ServiceProvider findServiceProviderByUsernameAndPassword(String username,String password){
-        return serviceProviderRepository.findByUsernameAndPassword(username,password);
+    public ServiceProvider findServiceProviderByEmailAndPassword(String email,String password){
+        return serviceProviderRepository.findByEmailAndPassword(email,password);
     }
     public ServiceProvider findServiceProviderByUsername(String username){
         ServiceProvider serviceProvider=serviceProviderRepository.findByUsername(username);
@@ -118,9 +116,18 @@ public class ServiceProviderService {
 
         return listOfServiceProviders.get(0);
     }
-    public ServiceProvider acceptTicket(String username, int ticketId){
+    public ServiceProvider acceptTicket(String username, long ticketId){
         ServiceProvider serviceProvider=serviceProviderRepository.findByUsername(username);
-        ServiceRequest serviceRequest=serviceRequestService.findTicketByTicketNumber(ticketId);
+        Optional<ServiceRequest> optionalServiceRequest= serviceRequestRepository.findById(ticketId);
+        ServiceRequest serviceRequest;
+        if (optionalServiceRequest.isPresent()) {
+            serviceRequest= optionalServiceRequest.get();
+        } else {
+            throw new RuntimeException("ServiceRequest not found ");
+        }
+        int numberOfServedTask= serviceProvider.getNumberOfServedTask();
+        serviceProvider.setNumberOfServedTask(++numberOfServedTask);
+        serviceRequest.setStatus("taken");
         if(serviceProvider.getServiceRequests()!=null) {
             serviceProvider.getServiceRequests().add(serviceRequest);
         }

@@ -10,6 +10,7 @@ import java.util.List;
 public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
+
     public String showAllCategories(){
       return categoryRepository.findAllDistinctCategories().toString();
     }

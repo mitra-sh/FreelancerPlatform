@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EndUserRepository extends JpaRepository<EndUser,Long> {
     EndUser findByUsername(String username);
-    EndUser findByUsernameAndPassword(String username,String password);
+    EndUser findByEmailAndPassword(String email,String password);
     EndUser findByEmail(String email);
 
 }

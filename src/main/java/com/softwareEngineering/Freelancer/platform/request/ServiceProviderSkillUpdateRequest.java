@@ -10,4 +10,12 @@ public class ServiceProviderSkillUpdateRequest {
     private String username;
     @Setter@Getter
     private List<String> skills;
+
+    @Override
+    public String toString() {
+        return "ServiceProviderSkillUpdateRequest{" +
+                "username='" + username + '\'' +
+                ", skills=" + skills +
+                '}';
+    }
 }

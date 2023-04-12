@@ -7,6 +7,6 @@ public class AcceptTicketRequest {
     @Setter @Getter
     private String username;
     @Setter @Getter
-    private int ticketNumber;
+    private long id;
 
 }

@@ -39,7 +39,7 @@ public class ServiceRequest {
     @Setter
     @Getter
     @Column
-    private int ticketNumber=0;
+    private String status="not_taken";
 
     @Setter
     @Getter
@@ -68,7 +68,7 @@ public class ServiceRequest {
         this.deliveryTime = deliveryTime;
         this.relatedCategories=categories;
         this.setRequiredSkills(requiredSkills);
-        this.setTicketNumber(++ticketNumber);
+        this.setStatus("not_taken");
     }
 
     @Override
@@ -85,5 +85,7 @@ public class ServiceRequest {
                 '}';
     }
 
-    public ServiceRequest() {}
+    public ServiceRequest() {
+
+    }
 }

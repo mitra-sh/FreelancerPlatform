@@ -12,10 +12,8 @@ public class ServiceRequestService {
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
-    public List<ServiceRequest> viewAllTickets(){
+    public List<ServiceRequest> viewAllTickets() {
         return serviceRequestRepository.findAll();
     }
-    public ServiceRequest findTicketByTicketNumber(int id){
-        return  serviceRequestRepository.findByTicketNumber(Long.valueOf(id));
-    }
+
 }

@@ -17,6 +17,10 @@ public class ServiceProvider extends User {
     @Setter
     @Getter
     @Column
+    public int numberOfServedTask = 0;
+    @Setter
+    @Getter
+    @Column
     private double rate = 0;
     @Setter
     @Getter
@@ -43,6 +47,7 @@ public class ServiceProvider extends User {
             joinColumns = @JoinColumn(name = "serviceProvider_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
+
 
     public ServiceProvider(String username, String email, String firstName, String lastName, String password, String type) {
         this.setUsername(username);

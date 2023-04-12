@@ -29,4 +29,17 @@ public class RequestForCreatingNewServiceRequest {
     @Setter
     @Getter
     private List<String> requiredSkills;
+
+    @Override
+    public String toString() {
+        return "RequestForCreatingNewServiceRequest{" +
+                "username='" + username + '\'' +
+                ", taskType='" + taskType + '\'' +
+                ", requirementDescriptions='" + requirementDescriptions + '\'' +
+                ", technicalConstraints='" + technicalConstraints + '\'' +
+                ", deliveryTime=" + deliveryTime +
+                ", categories=" + categories +
+                ", requiredSkills=" + requiredSkills +
+                '}';
+    }
 }

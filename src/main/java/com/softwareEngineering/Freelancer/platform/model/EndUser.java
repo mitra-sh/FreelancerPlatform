@@ -21,6 +21,10 @@ public class EndUser extends User {
             inverseJoinColumns = @JoinColumn(name = "serviceRequest_id"))
     private List<ServiceRequest> serviceRequests;
 
+    @Setter
+    @Getter
+    public int numberOfRequestedTask = 0;
+
     public EndUser(String username, String email, String firstName, String lastName, String password, String type) {
         this.setUsername(username);
         this.setEmail(email);
