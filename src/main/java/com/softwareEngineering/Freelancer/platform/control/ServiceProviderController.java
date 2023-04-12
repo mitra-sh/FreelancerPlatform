@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -69,17 +70,19 @@ public class ServiceProviderController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body(serviceRequestService.viewAllTickets());
     }
+    @Transactional
     @RequestMapping("/viewAllNonTakenTickets")
     public ResponseEntity viewAllNonTakenTickets(@RequestBody UsernameRequest request) {
         List<ServiceRequest> listOfTickets=serviceRequestService.viewAllTickets();
+        List<ServiceRequest> listOfNonTakenTickets=new ArrayList<ServiceRequest>();
         for (ServiceRequest ticket:listOfTickets){
-            if(ticket.getStatus().equals("taken")){
-                listOfTickets.remove(ticket);
+            if(ticket.getStatus().equals("not_taken")){
+                listOfNonTakenTickets.add(ticket);
             }
         }
         auditLogService.log(request.getUsername(),"request to view all available tickets in the system","");
         return ResponseEntity.status(HttpStatus.ACCEPTED).
-                body(listOfTickets);
+                body(listOfNonTakenTickets);
     }
     @Transactional
     @RequestMapping("/acceptTicket")
@@ -90,6 +93,29 @@ public class ServiceProviderController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body(updatedServiceProvider);
     }
+
+    @Transactional
+    @RequestMapping("/completeATicket")
+    public ResponseEntity completeATicket(@RequestBody AcceptTicketRequest request) {
+        ServiceProvider serviceProvider=serviceProviderService.findServiceProviderByUsername(request.getUsername());
+        Optional<ServiceRequest> optionalServiceRequest= serviceRequestRepository.findById(request.getId());
+        ServiceRequest serviceRequest=new ServiceRequest();
+        if (optionalServiceRequest.isPresent()) {
+            serviceRequest= optionalServiceRequest.get();
+        } else {
+            throw new RuntimeException("ServiceRequest not found ");
+        }
+        if(serviceProvider.getServiceRequests().contains(serviceRequest)){
+            int index=serviceProvider.getServiceRequests().indexOf(serviceRequest);
+            serviceProvider.getServiceRequests().get(index).setStatus("completed");
+        }
+        auditLogService.log(request.getUsername(),"complete a ticket","the id of ticket: "+request.getId());
+        return ResponseEntity.status(HttpStatus.ACCEPTED).
+                body(serviceRequest);
+    }
+
+
+
     @RequestMapping("/viewServiceProviderTickets")
     public ResponseEntity viewServiceProviderTickets(@RequestBody ViewServiceProviderTicketsRequest request) {
         ServiceProvider serviceProvider=serviceProviderService.findServiceProviderByUsername(request.getUsernameOfServiceProvider());

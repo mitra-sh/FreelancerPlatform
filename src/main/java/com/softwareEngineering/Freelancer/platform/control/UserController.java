@@ -1,7 +1,9 @@
 package com.softwareEngineering.Freelancer.platform.control;
 
+import com.softwareEngineering.Freelancer.platform.model.AuditLog;
 import com.softwareEngineering.Freelancer.platform.model.EndUser;
 import com.softwareEngineering.Freelancer.platform.model.ServiceProvider;
+import com.softwareEngineering.Freelancer.platform.repository.AuditLogRepository;
 import com.softwareEngineering.Freelancer.platform.request.*;
 import com.softwareEngineering.Freelancer.platform.service.AuditLogService;
 import com.softwareEngineering.Freelancer.platform.service.EndUserService;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 public class UserController {
@@ -23,7 +27,8 @@ public class UserController {
     private ServiceProviderService serviceProviderService;
     @Autowired
     private AuditLogService auditLogService;
-
+    @Autowired
+    private AuditLogRepository auditLogRepository;
 
     @RequestMapping("/createAccount")
     public ResponseEntity createAccount(@RequestBody CreateAccountRequest request) {
@@ -81,5 +86,47 @@ public class UserController {
             auditLogService.log(endUser.getUsername(),"logged in to the system"," ");
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(endUser);
         } else return ResponseEntity.status(HttpStatus.ACCEPTED).body("there is no user registered with this username and password");
+    }
+
+
+
+    @RequestMapping("/admin/report")
+    public ResponseEntity report(@RequestBody UsernameRequest request) {
+        ServiceProvider serviceProvider = serviceProviderService.findServiceProviderByUsername(request.getUsername());
+        EndUser endUser = endUserService.findEndUserByUsername(request.getUsername());
+        if (serviceProvider != null) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).
+                    body(auditLogRepository.findByUsername(serviceProvider.getUsername()));
+        } else if (endUser != null) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).
+                    body(auditLogRepository.findByUsername(endUser.getUsername()));
+        } else return ResponseEntity.status(HttpStatus.ACCEPTED).body("there is no user registered with this email");
+    }
+    @RequestMapping("/admin/reportFilteredByTime")
+    public ResponseEntity reportFilteredByTime(@RequestBody ReportRequestBasedOnTime request) {
+        ServiceProvider serviceProvider = serviceProviderService.findServiceProviderByUsername(request.getUsername());
+        EndUser endUser = endUserService.findEndUserByUsername(request.getUsername());
+        if (serviceProvider != null) {
+            List<AuditLog> logs=auditLogRepository.findByUsername(serviceProvider.getUsername());
+            for (AuditLog log:logs){
+                if(log.getTimestamp().isAfter(request.getEndTime()) ||
+                        log.getTimestamp().isBefore(request.getBeginningTime())
+                ){
+                    logs.remove(log);
+                }
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).
+                    body(logs);
+        } else if (endUser != null) {
+            List<AuditLog> logs=auditLogRepository.findByUsername(serviceProvider.getUsername());
+            for (AuditLog log:logs){
+                if(log.getTimestamp().isAfter(request.getEndTime()) ||
+                        log.getTimestamp().isBefore(request.getBeginningTime())
+                ){
+                    logs.remove(log);
+                }
+            }
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(logs);
+        } else return ResponseEntity.status(HttpStatus.ACCEPTED).body("there is no user registered with this email");
     }
 }

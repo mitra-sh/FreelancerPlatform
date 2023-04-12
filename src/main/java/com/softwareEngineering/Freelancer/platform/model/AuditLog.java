@@ -23,7 +23,7 @@ public class AuditLog {
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
-    @Column
+    @Column (length = 2000)
     private String details;
 
 
