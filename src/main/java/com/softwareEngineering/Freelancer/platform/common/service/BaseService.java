@@ -1,32 +1,75 @@
-package com.softwareEngineering.Freelancer.platform.service;
+package com.softwareEngineering.Freelancer.platform.common.service;
 
+import com.softwareEngineering.Freelancer.platform.common.repository.*;
 import com.softwareEngineering.Freelancer.platform.model.*;
-import com.softwareEngineering.Freelancer.platform.repository.EndUserRepository;
-import com.softwareEngineering.Freelancer.platform.repository.ServiceProviderRepository;
-import com.softwareEngineering.Freelancer.platform.repository.ServiceRequestRepository;
-import com.softwareEngineering.Freelancer.platform.repository.SkillRepository;
-import com.softwareEngineering.Freelancer.platform.request.CreateAccountRequest;
-import com.softwareEngineering.Freelancer.platform.request.CreateServiceProviderProfileRequest;
-import com.softwareEngineering.Freelancer.platform.request.ServiceProviderRatingRequest;
-import com.softwareEngineering.Freelancer.platform.request.ServiceProviderSkillUpdateRequest;
+import com.softwareEngineering.Freelancer.platform.request.*;
+import com.softwareEngineering.Freelancer.platform.service.EmailServiceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
-public class ServiceProviderService {
+public class BaseService {
     @Autowired
-    private ServiceProviderRepository serviceProviderRepository;
+    public AuditLogRepository auditLogRepository;
     @Autowired
-    private SkillRepository skillRepository;
+    public CategoryRepository categoryRepository;
     @Autowired
-    private EndUserRepository endUserRepository;
+    public EndUserRepository endUserRepository;
     @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    public ServiceProviderRepository serviceProviderRepository;
+    @Autowired
+    public ServiceRequestRepository serviceRequestRepository;
+    @Autowired
+    public SkillRepository skillRepository;
 
+    public void log(String username,String action, String details ) {
+        AuditLog auditLog = new AuditLog(action, LocalDateTime.now(), details, username);
+        auditLogRepository.save(auditLog);
+    }
+    public String showAllCategories(){
+        return categoryRepository.findAllDistinctCategories().toString();
+    }
+    public static void sendInvitation(String recipientEmail) throws MessagingException {
+        EmailServiceHelper.sendInvitation(recipientEmail, "freelancer.platform.6311@gmail.com", "wuqnufztuwxrkvak");
+        System.out.println("Invitation email sent successfully.");
+    }
+    public void deleteEndUser(EndUser endUser){
+        endUserRepository.delete(endUser);
+    }
+    public void createNewEndUser(CreateAccountRequest request) {
+        EndUser endUser = new EndUser(request.getUsername(), request.getEmail(),
+                request.getFirstname(), request.getLastname(),request.getPassword(),request.getType());
+        if(endUserRepository.findByUsername(endUser.getUsername())==null) {
+            endUserRepository.save(endUser);
+        }
+        else throw new RuntimeException("The username is taken. you must use a unique username");
+    }
 
+    public EndUser createNewServiceRequestForEndUser(RequestForCreatingNewServiceRequest request) {
+        ServiceRequest ticket = new ServiceRequest(request.getCategories(), request.getTaskType(), request.getRequirementDescriptions(),
+                request.getTechnicalConstraints(), request.getDeliveryTime(), request.getRequiredSkills());
+        EndUser endUser = endUserRepository.findByUsername(request.getUsername());
+        endUser.getServiceRequests().add(ticket);
+        int numberOfRequestedTask=endUser.getNumberOfRequestedTask();
+        endUser.setNumberOfRequestedTask(++numberOfRequestedTask);
+        endUserRepository.save(endUser);
+        return endUser;
+    }
+
+    public EndUser findEndUserByUsername(String username) {
+        return endUserRepository.findByUsername(username);
+    }
+    public EndUser findEndUserByEmailAndPassword(String email, String password) {
+        return endUserRepository.findByEmailAndPassword(email,password);
+    }
+    public EndUser findEndUserByEmail(String email) {
+        return endUserRepository.findByEmail(email);
+    }
     public void createNewServiceProvider(CreateAccountRequest request){
         ServiceProvider serviceProvider=new ServiceProvider(request.getUsername(),request.getEmail(),
                 request.getFirstname(),request.getLastname(),request.getPassword(),request.getType());
@@ -138,6 +181,9 @@ public class ServiceProviderService {
         }
         serviceProviderRepository.save(serviceProvider);
         return serviceProvider;
+    }
+    public List<ServiceRequest> viewAllTickets() {
+        return serviceRequestRepository.findAll();
     }
 
 }

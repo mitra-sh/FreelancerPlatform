@@ -1,4 +1,4 @@
-package com.softwareEngineering.Freelancer.platform.repository;
+package com.softwareEngineering.Freelancer.platform.common.repository;
 
 public class FindMostMatchedServiceProviderRequest {
     private String username;

@@ -1,4 +1,4 @@
-package com.softwareEngineering.Freelancer.platform.service;
+package com.softwareEngineering.Freelancer.platform.common;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;

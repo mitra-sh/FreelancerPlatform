@@ -1,4 +1,4 @@
-package com.softwareEngineering.Freelancer.platform.repository;
+package com.softwareEngineering.Freelancer.platform.common.repository;
 
 import com.softwareEngineering.Freelancer.platform.model.EndUser;
 import org.springframework.data.jpa.repository.JpaRepository;
