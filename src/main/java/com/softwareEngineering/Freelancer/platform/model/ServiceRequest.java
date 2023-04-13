@@ -40,6 +40,10 @@ public class ServiceRequest {
     @Getter
     @Column
     private String status="not_taken";
+    @Setter
+    @Getter
+    @Column
+    private String usernameOfProvider="";
 
     @Setter
     @Getter

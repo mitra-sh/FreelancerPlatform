@@ -11,6 +11,4 @@ import java.util.Optional;
 
 @Repository
 public interface ServiceRequestRepository extends JpaRepository<ServiceRequest,Long> {
-    //ServiceRequest findByTicketNumber(Long ticketNumber);
-
 }

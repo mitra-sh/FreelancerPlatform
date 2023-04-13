@@ -1,4 +1,3 @@
-
 package com.softwareEngineering.Freelancer.platform.ticketmanagement;
 
 import com.softwareEngineering.Freelancer.platform.common.controller.BaseController;
@@ -19,10 +18,11 @@ import java.util.Optional;
 @RestController
 @CrossOrigin
 public class TicketManagementController extends BaseController {
+
     @RequestMapping("/createNewServiceRequestForEndUser")
-    public ResponseEntity createNewServiceRequest(@RequestBody RequestForCreatingNewServiceRequest request){
-        EndUser endUser=baseService.createNewServiceRequestForEndUser(request);
-        baseService.log(request.getUsername(),"request a new ticket",request.toString());
+    public ResponseEntity createNewServiceRequest(@RequestBody RequestForCreatingNewServiceRequest request) {
+        EndUser endUser = baseService.createNewServiceRequestForEndUser(request);
+        baseService.log(request.getUsername(), "request a new ticket", request.toString());
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body(endUser);
     }
@@ -30,7 +30,7 @@ public class TicketManagementController extends BaseController {
 
     @RequestMapping("/viewAllTickets")
     public ResponseEntity viewAllTickets(@RequestBody UsernameRequest request) {
-        baseService.log(request.getUsername(),"request to view all tickets in the system","");
+        baseService.log(request.getUsername(), "request to view all tickets in the system", "");
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body(baseService.viewAllTickets());
     }
@@ -38,28 +38,18 @@ public class TicketManagementController extends BaseController {
     @Transactional
     @RequestMapping("/acceptTicket")
     public ResponseEntity acceptTicket(@RequestBody AcceptTicketRequest request) {
-        ServiceProvider updatedServiceProvider= baseService.acceptTicket(request.getUsername(),
+        ServiceProvider updatedServiceProvider = baseService.acceptTicket(request.getUsername(),
                 request.getId());
-        baseService.log(request.getUsername(),"accept a ticket","the id of ticket: "+request.getId());
+        baseService.log(request.getUsername(), "accept a ticket", "the id of ticket: " + request.getId());
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body(updatedServiceProvider);
     }
+
     @Transactional
     @RequestMapping("/completeATicket")
-        public ResponseEntity completeATicket(@RequestBody AcceptTicketRequest request) {
-        ServiceProvider serviceProvider=baseService.findServiceProviderByUsername(request.getUsername());
-        Optional<ServiceRequest> optionalServiceRequest= baseService.serviceRequestRepository.findById(request.getId());
-        ServiceRequest serviceRequest=new ServiceRequest();
-        if (optionalServiceRequest.isPresent()) {
-            serviceRequest= optionalServiceRequest.get();
-        } else {
-            throw new RuntimeException("ServiceRequest not found ");
-        }
-        if(serviceProvider.getServiceRequests().contains(serviceRequest)){
-            int index=serviceProvider.getServiceRequests().indexOf(serviceRequest);
-            serviceProvider.getServiceRequests().get(index).setStatus("completed");
-        }
-        baseService.log(request.getUsername(),"complete a ticket","the id of ticket: "+request.getId());
+    public ResponseEntity completeATicket(@RequestBody AcceptTicketRequest request) {
+        ServiceRequest serviceRequest = baseService.updateServiceRequestRepository(request.getId());
+        baseService.log(request.getUsername(), "complete a ticket", "the id of ticket: " + request.getId());
         return ResponseEntity.status(HttpStatus.ACCEPTED).
                 body(serviceRequest);
     }

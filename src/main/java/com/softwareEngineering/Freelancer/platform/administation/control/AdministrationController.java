@@ -39,10 +39,10 @@ public class AdministrationController extends BaseController {
         EndUser endUser = baseService.findEndUserByUsername(request.getUsername());
         if (serviceProvider != null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).
-                    body(baseService.auditLogRepository.findByUsername(serviceProvider.getUsername()));
+                    body(baseService.findLogFilteredByUsername(serviceProvider.getUsername()));
         } else if (endUser != null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).
-                    body(baseService.auditLogRepository.findByUsername(endUser.getUsername()));
+                    body(baseService.findLogFilteredByUsername(endUser.getUsername()));
         } else return ResponseEntity.status(HttpStatus.ACCEPTED).body("there is no user registered with this email");
     }
     @RequestMapping("/admin/reportFilteredByTime")
@@ -50,7 +50,7 @@ public class AdministrationController extends BaseController {
         ServiceProvider serviceProvider = baseService.findServiceProviderByUsername(request.getUsername());
         EndUser endUser = baseService.findEndUserByUsername(request.getUsername());
         if (serviceProvider != null) {
-            List<AuditLog> logs=baseService.auditLogRepository.findByUsername(serviceProvider.getUsername());
+            List<AuditLog> logs=baseService.findLogFilteredByUsername(serviceProvider.getUsername());
             for (AuditLog log:logs){
                 if(log.getTimestamp().isAfter(request.getEndTime()) ||
                         log.getTimestamp().isBefore(request.getBeginningTime())
@@ -61,7 +61,7 @@ public class AdministrationController extends BaseController {
             return ResponseEntity.status(HttpStatus.ACCEPTED).
                     body(logs);
         } else if (endUser != null) {
-            List<AuditLog> logs=baseService.auditLogRepository.findByUsername(serviceProvider.getUsername());
+            List<AuditLog> logs=baseService.findLogFilteredByUsername(serviceProvider.getUsername());
             for (AuditLog log:logs){
                 if(log.getTimestamp().isAfter(request.getEndTime()) ||
                         log.getTimestamp().isBefore(request.getBeginningTime())

@@ -1,9 +1,10 @@
 package com.softwareEngineering.Freelancer.platform.common.service;
 
+import com.softwareEngineering.Freelancer.platform.common.EmailServiceHelper;
 import com.softwareEngineering.Freelancer.platform.common.repository.*;
 import com.softwareEngineering.Freelancer.platform.model.*;
 import com.softwareEngineering.Freelancer.platform.request.*;
-import com.softwareEngineering.Freelancer.platform.service.EmailServiceHelper;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +28,33 @@ public class BaseService {
     @Autowired
     public SkillRepository skillRepository;
 
+   public List<AuditLog> findLogFilteredByUsername(String username){
+        return auditLogRepository.findByUsername(username);
+   }
+    public  List<ServiceRequest> findAllTickets(){
+        return serviceRequestRepository.findAll();
+    }
+
+    public ServiceRequest updateServiceRequestRepository(long id){
+       ServiceRequest serviceRequest= findServiceRequestById(id);
+       if(serviceRequest!=null){
+           serviceRequest.setStatus("completed");
+           serviceRequestRepository.save(serviceRequest);
+           return serviceRequest;
+       }
+       else throw new RuntimeException("invalid request id");
+   }
     public void log(String username,String action, String details ) {
         AuditLog auditLog = new AuditLog(action, LocalDateTime.now(), details, username);
         auditLogRepository.save(auditLog);
+    }
+    public ServiceRequest findServiceRequestById(long id){
+        Optional<ServiceRequest> optionalServiceRequest= serviceRequestRepository.findById(id);
+        if (optionalServiceRequest.isPresent()) {
+            return optionalServiceRequest.get();
+        } else {
+            throw new EntityNotFoundException("ServiceRequest not found with ID: " + id);
+        }
     }
     public String showAllCategories(){
         return categoryRepository.findAllDistinctCategories().toString();
@@ -139,7 +164,8 @@ public class BaseService {
     public ServiceProvider findTheMostMatchedServiceProviderForAUser(String username) {
         EndUser endUser=endUserRepository.findByUsername(username);
         List<ServiceProvider> listOfServiceProviders = new ArrayList<ServiceProvider>();
-//probably might not work for two
+        HashMap<String,ServiceProvider> finalList=new HashMap<String,ServiceProvider>();
+        //probably might not work for two
         for (ServiceRequest serviceRequest : endUser.getServiceRequests()) {
             for (String skillTitle : serviceRequest.getRequiredSkills()) {
                 listOfServiceProviders = serviceProviderRepository.findBySkillsSkillTitle(skillTitle);
@@ -148,15 +174,19 @@ public class BaseService {
                         int numberOfMatchedSkills = serviceProvider.getNumberOfMatchedSkills();
                         numberOfMatchedSkills++;
                         serviceProvider.setNumberOfMatchedSkills(numberOfMatchedSkills);
-
+                        finalList.put(serviceProvider.getUsername(),serviceProvider);
                     }
                 } else
                     throw new RuntimeException("No service provider is found to match the required skills of the service ticket");
             }
         }
         Comparator<ServiceProvider> byRateDesc = Comparator.comparing(ServiceProvider::getNumberOfMatchedSkills, Comparator.reverseOrder());
-        Collections.sort(listOfServiceProviders, byRateDesc);
-
+        //Collections.sort(listOfServiceProviders, byRateDesc);
+        List<ServiceProvider> finall = new ArrayList<ServiceProvider>();
+        for (ServiceProvider serviceProvider:finalList.values()){
+            finall.add(serviceProvider);
+        }
+        Collections.sort(finall, byRateDesc);
         return listOfServiceProviders.get(0);
     }
     public ServiceProvider acceptTicket(String username, long ticketId){
@@ -171,6 +201,7 @@ public class BaseService {
         int numberOfServedTask= serviceProvider.getNumberOfServedTask();
         serviceProvider.setNumberOfServedTask(++numberOfServedTask);
         serviceRequest.setStatus("taken");
+        serviceRequest.setUsernameOfProvider(serviceProvider.getUsername());
         if(serviceProvider.getServiceRequests()!=null) {
             serviceProvider.getServiceRequests().add(serviceRequest);
         }
