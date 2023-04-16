@@ -187,7 +187,7 @@ public class BaseService {
             finall.add(serviceProvider);
         }
         Collections.sort(finall, byRateDesc);
-        return listOfServiceProviders.get(0);
+        return finall.get(0);
     }
     public ServiceProvider acceptTicket(String username, long ticketId){
         ServiceProvider serviceProvider=serviceProviderRepository.findByUsername(username);
